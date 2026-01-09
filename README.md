@@ -4,7 +4,6 @@ An elegant, browser-based application designed to create high-quality daily bles
 
 ## ✨ Features
 * **Auto-Formatting:** Simply paste your message, and the app automatically identifies the Verse, Reference, and Prayer.
-* **Glassmorphic UI:** A clean, high-contrast design with premium typography (Cinzel & Playfair Display).
 * **Local Storage:** Uses IndexedDB to save your background presets and profile pictures directly in your browser/app.
 * **Offline Ready:** Built as a Progressive Web App (PWA)—install it on your phone and use it without internet.
 * **Privacy Focused:** All image processing happens on your device. Your photos are never uploaded to a server.

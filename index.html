@@ -22,7 +22,6 @@
         .toggle-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 12px; color: #ddd; }
         .toggle-row input { width: auto; margin: 0; }
         
-        /* Presets & Gallery */
         .preset-container { margin-top: 10px; background: #252525; padding: 10px; border-radius: 8px; border: 1px dashed #444; }
         .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
         .thumb-wrapper, .profile-thumb-wrapper { position: relative; width: 100%; aspect-ratio: 9/16; border-radius: 4px; overflow: hidden; border: 1px solid #555; cursor: pointer; }
@@ -44,7 +43,6 @@
         .about-text { font-size: 11px; color: #777; line-height: 1.2; margin: 0; }
         .about-text strong { color: #ffffff; font-family: 'Segoe UI', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; font-size: 12px; display: inline-block; margin: 2px 0; }
 
-        /* Poster Canvas */
         #poster-canvas { width: 360px; height: 640px; position: relative; overflow: hidden; background: #000; flex-shrink: 0; }
         #bg-image { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
         .overlay { position: absolute; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.8)); z-index: 2; }
@@ -126,7 +124,7 @@
             <div class="verse-ref" id="outRef">REFERENCE</div>
             <div class="short-msg" id="outMsg">SHORT MESSAGE</div>
             <div class="prayer-container">
-                <span class="prayer-label">Short Prayer</span>
+                <span class="prayer-label" id="outPrayerTitle">Short Prayer</span>
                 <div class="prayer-text" id="outPrayerBody">...</div>
             </div>
         </div>
@@ -163,17 +161,43 @@
         renderPresets(); renderProfilePresets();
     }
 
+    // UPDATED LOGIC FOR TEXT PARSING
     document.getElementById('textInput').addEventListener('input', e => {
-        const lines = e.target.value.split('\n').map(l => l.trim().replace(/^>\s*/, '')).filter(l => l !== "");
+        const lines = e.target.value.split('\n')
+            .map(l => l.trim().replace(/^>\s*/, ''))
+            .filter(l => l !== "");
+
         const refPattern = /([1-3]\s)?[A-Z][a-z]+\s\d+:\d+(-?\d+)?/i;
         let foundRef = "REFERENCE", otherLines = [];
-        lines.forEach(l => { if(refPattern.test(l)) foundRef = l.toUpperCase(); else otherLines.push(l); });
+
+        lines.forEach(l => { 
+            if(refPattern.test(l)) foundRef = l.toUpperCase(); 
+            else otherLines.push(l); 
+        });
+
+        // Line 1: The Verse
         if(otherLines[0]) document.getElementById('outVerse').innerText = otherLines[0];
+        
+        // The Bible Reference
         document.getElementById('outRef').innerText = foundRef;
+
+        // Line 2: Short Praise Message
         if(otherLines[1]) document.getElementById('outMsg').innerText = otherLines[1];
-        let prayerLines = [];
-        for (let i = 2; i < otherLines.length; i++) { prayerLines.push(otherLines[i]); }
-        document.getElementById('outPrayerBody').innerText = prayerLines.join(" ");
+
+        // Line 3: The Prayer Title (Auto-Detected)
+        if(otherLines[2]) {
+            document.getElementById('outPrayerTitle').innerText = otherLines[2];
+        } else {
+            document.getElementById('outPrayerTitle').innerText = "Short Prayer";
+        }
+
+        // Line 4 and beyond: The Prayer Body
+        let prayerBodyLines = [];
+        for (let i = 3; i < otherLines.length; i++) { 
+            prayerBodyLines.push(otherLines[i]); 
+        }
+        document.getElementById('outPrayerBody').innerText = prayerBodyLines.join(" ");
+        
         adjustFontSize();
     });
 

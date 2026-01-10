@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word of God Poster Studio</title>
+    <title>God's Word Poster Studio</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,31 +19,26 @@
         h2 { font-family: 'Cinzel', serif; font-size: 14px; color: #d4af37; border-bottom: 1px solid #333; padding-bottom: 8px; margin-top: 0; }
         label { display: block; margin-top: 15px; font-size: 10px; text-transform: uppercase; color: #888; letter-spacing: 1px; }
         textarea, input, select { width: 100%; background: #2a2a2a; border: 1px solid #444; color: white; padding: 10px; margin-top: 5px; border-radius: 6px; box-sizing: border-box; }
-        .toggle-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 12px; color: #ddd; }
-        .toggle-row input { width: auto; margin: 0; }
         
-        /* Presets & Gallery */
         .preset-container { margin-top: 10px; background: #252525; padding: 10px; border-radius: 8px; border: 1px dashed #444; }
         .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
         .thumb-wrapper, .profile-thumb-wrapper { position: relative; width: 100%; aspect-ratio: 9/16; border-radius: 4px; overflow: hidden; border: 1px solid #555; cursor: pointer; }
         .profile-thumb-wrapper { aspect-ratio: 1/1; border-radius: 8px; }
         .thumb-img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* DELETE BUTTON STYLE */
         .del-btn { 
             position: absolute; top: 2px; right: 2px; background: rgba(255,0,0,0.8); color: white; 
             border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5;
-            font-weight: bold; line-height: 1;
         }
 
-        .btn-add-preset { background: #444; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 10px; cursor: pointer; width: 100%; }
+        .btn-add-preset { background: #444; color: white; border: none; padding: 8px; border-radius: 4px; font-size: 10px; cursor: pointer; width: 100%; margin-bottom: 5px; }
         .download-btn { width: 100%; padding: 15px; margin-top: 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: #d4af37; color: #000; font-size: 16px; }
-        .reset-btn { width: 100%; padding: 10px; margin-top: 20px; border: 1px solid #444; border-radius: 6px; background: transparent; color: #666; font-size: 11px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .reset-btn { width: 100%; padding: 10px; margin-top: 20px; border: 1px solid #444; border-radius: 6px; background: transparent; color: #666; font-size: 11px; cursor: pointer; text-transform: uppercase; }
 
         .about-section { margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; text-align: center; }
         .about-text { font-size: 11px; color: #777; line-height: 1.2; margin: 0; }
-        .about-text strong { color: #ffffff; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; font-size: 12px; display: inline-block; margin: 2px 0; }
+        .about-text strong { color: #ffffff; text-transform: uppercase; letter-spacing: 1.2px; font-size: 12px; display: inline-block; margin: 2px 0; }
 
         /* Poster Canvas */
         #poster-canvas { width: 360px; height: 640px; position: relative; overflow: hidden; background: #000; flex-shrink: 0; }
@@ -51,8 +46,7 @@
         .overlay { position: absolute; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.8)); z-index: 2; }
         .poster-content { position: relative; z-index: 3; height: 100%; width: 100%; display: flex; flex-direction: column; padding: 25px 30px 20px 30px; box-sizing: border-box; text-align: center; justify-content: space-between; }
         
-        .date-container { display: flex; justify-content: center; margin-bottom: 8px; }
-        .date-stamp { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px; color: #fff; text-transform: uppercase; background: rgba(0, 0, 0, 0.35); padding: 5px 15px; border-radius: 20px; backdrop-filter: blur(4px); border: 0.5px solid rgba(255, 255, 255, 0.1); }
+        .date-stamp { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px; color: #fff; text-transform: uppercase; background: rgba(0, 0, 0, 0.35); padding: 5px 15px; border-radius: 20px; backdrop-filter: blur(4px); display: inline-block; margin-bottom: 10px; }
         .main-title { font-family: 'Cinzel', serif; font-size: 34px; margin: 0; color: #fff; text-transform: uppercase; line-height: 0.9; }
         .sub-title { font-family: 'Playfair Display', serif; font-size: 22px; font-style: italic; margin-top: -4px; color: #ffffff; }
         
@@ -69,7 +63,7 @@
 
         @media (max-width: 700px) {
             body { flex-direction: column; align-items: center; padding: 10px; }
-            .sidebar { width: 95%; height: auto; order: 2; margin-bottom: 20px; }
+            .sidebar { width: 95%; height: auto; order: 2; }
             #poster-canvas { width: 100vw; height: 177.7vw; max-width: 360px; max-height: 640px; order: 1; }
         }
     </style>
@@ -81,11 +75,6 @@
     <label>Paste Full Message</label>
     <textarea id="textInput" placeholder="Paste full text here..."></textarea>
     
-    <div class="toggle-row">
-        <input type="checkbox" id="showDateToggle" checked onchange="toggleDate()">
-        <span>Show Auto-Date</span>
-    </div>
-
     <label>Background Images</label>
     <input type="file" id="bgInput" accept="image/*">
     <div class="preset-container">
@@ -112,13 +101,11 @@
 </div>
 
 <div id="poster-canvas">
-    <img id="bg-image" src="" style="display:none;">
+    <img id="bg-image" src="">
     <div class="overlay"></div>
     <div class="poster-content">
         <div class="header">
-            <div class="date-container" id="dateCont">
-                <div class="date-stamp" id="outDate"></div>
-            </div>
+            <div class="date-stamp" id="outDate"></div>
             <h1 class="main-title">God's Word</h1>
             <p class="sub-title">My daily blessing</p>
         </div>
@@ -127,7 +114,7 @@
             <div class="verse-ref" id="outRef">REFERENCE</div>
             <div class="short-msg" id="outMsg">SHORT MESSAGE</div>
             <div class="prayer-container">
-                <span class="prayer-label">Short Prayer</span>
+                <span class="prayer-label" id="outPrayerTitle">Short Prayer</span>
                 <div class="prayer-text" id="outPrayerBody">...</div>
             </div>
         </div>
@@ -139,10 +126,8 @@
 </div>
 
 <script>
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
-
     let db;
-    const request = indexedDB.open("PosterStudioDB", 5);
+    const request = indexedDB.open("PosterStudioDB", 6);
     request.onsuccess = e => { db = e.target.result; loadSavedData(); setCurrentDate(); };
     request.onupgradeneeded = e => { db = e.target.result; if (!db.objectStoreNames.contains("assets")) db.createObjectStore("assets"); };
 
@@ -154,12 +139,12 @@
         document.getElementById('outDate').innerText = new Date().toLocaleDateString('en-US', options).toUpperCase();
     }
 
-    function toggleDate() { document.getElementById('dateCont').style.display = document.getElementById('showDateToggle').checked ? 'flex' : 'none'; }
-
-    function resetAllData() { if (confirm("Reset all presets?")) { const tx = db.transaction("assets", "readwrite"); tx.objectStore("assets").clear(); tx.oncomplete = () => location.reload(); } }
-
     function loadSavedData() {
+        // Restore Background
+        getFromDB("lastBg", val => { if(val) { document.getElementById('bg-image').src = val; } });
+        // Restore Profile
         getFromDB("sigImg", val => { if(val) { const el = document.getElementById('sig-out-img'); el.src = val; el.style.display = 'block'; } });
+        // Restore Name
         getFromDB("lastName", val => { if(val) { document.getElementById('sigNameInput').value = val; document.getElementById('sig-out-name').innerText = val; } });
         renderPresets(); renderProfilePresets();
     }
@@ -167,14 +152,34 @@
     document.getElementById('textInput').addEventListener('input', e => {
         const lines = e.target.value.split('\n').map(l => l.trim().replace(/^>\s*/, '')).filter(l => l !== "");
         const refPattern = /([1-3]\s)?[A-Z][a-z]+\s\d+:\d+(-?\d+)?/i;
-        let foundRef = "REFERENCE", otherLines = [];
-        lines.forEach(l => { if(refPattern.test(l)) foundRef = l.toUpperCase(); else otherLines.push(l); });
-        if(otherLines[0]) document.getElementById('outVerse').innerText = otherLines[0];
-        document.getElementById('outRef').innerText = foundRef;
-        if(otherLines[1]) document.getElementById('outMsg').innerText = otherLines[1];
-        let prayerLines = [];
-        for (let i = 2; i < otherLines.length; i++) { prayerLines.push(otherLines[i]); }
-        document.getElementById('outPrayerBody').innerText = prayerLines.join(" ");
+        
+        let refIndex = -1;
+        let prayerIndex = -1;
+
+        // Find key indices
+        lines.forEach((line, i) => {
+            if (refPattern.test(line)) refIndex = i;
+            if (line.toLowerCase().includes("prayer")) prayerIndex = i;
+        });
+
+        // Set Verse & Reference
+        if (refIndex !== -1) {
+            document.getElementById('outVerse').innerText = lines.slice(0, refIndex).join(" ");
+            document.getElementById('outRef').innerText = lines[refIndex].toUpperCase();
+        }
+
+        // Set Prayer Title and Body
+        if (prayerIndex !== -1) {
+            document.getElementById('outPrayerTitle').innerText = lines[prayerIndex];
+            document.getElementById('outPrayerBody').innerText = lines.slice(prayerIndex + 1).join(" ");
+            
+            // Short Message is everything between Reference and Prayer
+            if (refIndex !== -1 && prayerIndex > refIndex + 1) {
+                document.getElementById('outMsg').innerText = lines.slice(refIndex + 1, prayerIndex).join(" ");
+            } else {
+                document.getElementById('outMsg').innerText = "";
+            }
+        }
         adjustFontSize();
     });
 
@@ -188,56 +193,68 @@
         }
     }
 
-    // PRESET LOGIC WITH DELETE
-    function saveCurrentBg() { const src = document.getElementById('bg-image').src; getFromDB("bgPresets", (p = []) => { p.push(src); saveToDB("bgPresets", p); renderPresets(); }); }
+    function saveCurrentBg() { 
+        const src = document.getElementById('bg-image').src; 
+        if(!src) return;
+        getFromDB("bgPresets", (p = []) => { p.push(src); saveToDB("bgPresets", p); renderPresets(); }); 
+    }
     
-    function deleteBgPreset(idx, event) {
-        event.stopPropagation();
-        if(confirm("Delete this background?")) { getFromDB("bgPresets", (p = []) => { p.splice(idx, 1); saveToDB("bgPresets", p); renderPresets(); }); }
+    function renderPresets() { 
+        getFromDB("bgPresets", (p = []) => { 
+            const g = document.getElementById('presetGallery'); g.innerHTML = ''; 
+            p.forEach((d, i) => { 
+                const w = document.createElement('div'); w.className = 'thumb-wrapper'; 
+                w.onclick = () => { document.getElementById('bg-image').src = d; saveToDB("lastBg", d); };
+                const del = document.createElement('button'); del.className = 'del-btn'; del.innerHTML = 'X'; 
+                del.onclick = (e) => { e.stopPropagation(); p.splice(i, 1); saveToDB("bgPresets", p); renderPresets(); };
+                const img = document.createElement('img'); img.src = d; img.className='thumb-img'; 
+                w.append(del, img); g.appendChild(w); 
+            }); 
+        }); 
     }
 
-    function renderPresets() {
-        getFromDB("bgPresets", (p = []) => {
-            const g = document.getElementById('presetGallery');
-            g.innerHTML = '';
-            p.forEach((d, i) => {
-                const w = document.createElement('div'); w.className = 'thumb-wrapper';
-                w.onclick = () => document.getElementById('bg-image').src = d;
-                const del = document.createElement('button'); del.className = 'del-btn'; del.innerHTML = 'X';
-                del.onclick = (e) => deleteBgPreset(i, e);
-                const img = document.createElement('img'); img.src = d; img.className='thumb-img';
-                w.append(del, img); g.appendChild(w);
-            });
-        });
+    function saveCurrentProfile() { 
+        const src = document.getElementById('sig-out-img').src; 
+        if(!src) return;
+        getFromDB("profP", (p = []) => { p.push(src); saveToDB("profP", p); renderProfilePresets(); }); 
     }
 
-    function saveCurrentProfile() { const src = document.getElementById('sig-out-img').src; getFromDB("profP", (p = []) => { p.push(src); saveToDB("profP", p); renderProfilePresets(); }); }
-    
-    function deleteProfilePreset(idx, event) {
-        event.stopPropagation();
-        if(confirm("Delete this profile?")) { getFromDB("profP", (p = []) => { p.splice(idx, 1); saveToDB("profP", p); renderProfilePresets(); }); }
-    }
-
-    function renderProfilePresets() {
-        getFromDB("profP", (p = []) => {
-            const g = document.getElementById('profileGallery');
-            g.innerHTML = '';
-            p.forEach((d, i) => {
-                const w = document.createElement('div'); w.className = 'profile-thumb-wrapper';
+    function renderProfilePresets() { 
+        getFromDB("profP", (p = []) => { 
+            const g = document.getElementById('profileGallery'); g.innerHTML = ''; 
+            p.forEach((d, i) => { 
+                const w = document.createElement('div'); w.className = 'profile-thumb-wrapper'; 
                 w.onclick = () => { document.getElementById('sig-out-img').src = d; saveToDB("sigImg", d); };
-                const del = document.createElement('button'); del.className = 'del-btn'; del.innerHTML = 'X';
-                del.onclick = (e) => deleteProfilePreset(i, e);
-                const img = document.createElement('img'); img.src = d; img.className='thumb-img';
-                w.append(del, img); g.appendChild(w);
-            });
-        });
+                const del = document.createElement('button'); del.className = 'del-btn'; del.innerHTML = 'X'; 
+                del.onclick = (e) => { e.stopPropagation(); p.splice(i, 1); saveToDB("profP", p); renderProfilePresets(); };
+                const img = document.createElement('img'); img.src = d; img.className='thumb-img'; 
+                w.append(del, img); g.appendChild(w); 
+            }); 
+        }); 
     }
+
+    document.getElementById('bgInput').onchange = e => { 
+        const r = new FileReader(); 
+        r.onload = ev => { 
+            document.getElementById('bg-image').src = ev.target.result; 
+            saveToDB("lastBg", ev.target.result); 
+        }; 
+        r.readAsDataURL(e.target.files[0]); 
+    };
+
+    document.getElementById('sigImgInput').onchange = e => { 
+        const r = new FileReader(); 
+        r.onload = ev => { 
+            const el = document.getElementById('sig-out-img');
+            el.src = ev.target.result; el.style.display = 'block'; 
+            saveToDB("sigImg", ev.target.result); 
+        }; 
+        r.readAsDataURL(e.target.files[0]); 
+    };
 
     document.getElementById('sigNameInput').oninput = e => { document.getElementById('sig-out-name').innerText = e.target.value; saveToDB("lastName", e.target.value); };
-    document.getElementById('bgInput').onchange = e => { const r = new FileReader(); r.onload = ev => { const bg = document.getElementById('bg-image'); bg.src = ev.target.result; bg.style.display = 'block'; }; r.readAsDataURL(e.target.files[0]); };
-    document.getElementById('sigImgInput').onchange = e => { const r = new FileReader(); r.onload = ev => { document.getElementById('sig-out-img').src = ev.target.result; document.getElementById('sig-out-img').style.display = 'block'; saveToDB("sigImg", ev.target.result); }; r.readAsDataURL(e.target.files[0]); };
-
-    function downloadPoster() { html2canvas(document.getElementById('poster-canvas'), { scale: 3 }).then(c => { const l = document.createElement('a'); l.download = 'WordOfGod_Poster.png'; l.href = c.toDataURL(); l.click(); }); }
+    function resetAllData() { if (confirm("Reset everything?")) { const tx = db.transaction("assets", "readwrite"); tx.objectStore("assets").clear(); tx.oncomplete = () => location.reload(); } }
+    function downloadPoster() { html2canvas(document.getElementById('poster-canvas'), { scale: 3 }).then(c => { const l = document.createElement('a'); l.download = 'GodsWord.png'; l.href = c.toDataURL(); l.click(); }); }
 </script>
 </body>
 </html>

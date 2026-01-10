@@ -22,12 +22,19 @@
         .toggle-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 12px; color: #ddd; }
         .toggle-row input { width: auto; margin: 0; }
         
+        /* Preset Styling */
         .preset-container { margin-top: 10px; background: #252525; padding: 10px; border-radius: 8px; border: 1px dashed #444; }
         .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
-        .thumb-wrapper, .profile-thumb-wrapper { position: relative; width: 100%; aspect-ratio: 9/16; border-radius: 4px; overflow: hidden; border: 1px solid #555; cursor: pointer; }
+        .thumb-wrapper, .profile-thumb-wrapper { 
+            position: relative; width: 100%; aspect-ratio: 9/16; border-radius: 4px; 
+            overflow: hidden; border: 2px solid transparent; cursor: pointer; transition: all 0.2s;
+        }
         .profile-thumb-wrapper { aspect-ratio: 1/1; border-radius: 8px; }
         .thumb-img { width: 100%; height: 100%; object-fit: cover; }
         
+        /* GOLD ACTIVE BORDER */
+        .active-preset { border-color: #d4af37 !important; box-shadow: 0 0 8px rgba(212, 175, 55, 0.6); transform: scale(0.95); }
+
         .del-btn { 
             position: absolute; top: 2px; right: 2px; background: rgba(255,0,0,0.8); color: white; 
             border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; 
@@ -43,6 +50,7 @@
         .about-text { font-size: 11px; color: #777; line-height: 1.2; margin: 0; }
         .about-text strong { color: #ffffff; font-family: 'Segoe UI', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; font-size: 12px; display: inline-block; margin: 2px 0; }
 
+        /* Poster Canvas */
         #poster-canvas { width: 360px; height: 640px; position: relative; overflow: hidden; background: #000; flex-shrink: 0; }
         #bg-image { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
         .overlay { position: absolute; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.8)); z-index: 2; }
@@ -152,52 +160,28 @@
     }
 
     function toggleDate() { document.getElementById('dateCont').style.display = document.getElementById('showDateToggle').checked ? 'flex' : 'none'; }
-
     function resetAllData() { if (confirm("Reset all presets?")) { const tx = db.transaction("assets", "readwrite"); tx.objectStore("assets").clear(); tx.oncomplete = () => location.reload(); } }
 
     function loadSavedData() {
         getFromDB("sigImg", val => { if(val) { const el = document.getElementById('sig-out-img'); el.src = val; el.style.display = 'block'; } });
+        getFromDB("activeBg", val => { if(val) { const el = document.getElementById('bg-image'); el.src = val; el.style.display = 'block'; renderPresets(); } });
         getFromDB("lastName", val => { if(val) { document.getElementById('sigNameInput').value = val; document.getElementById('sig-out-name').innerText = val; } });
         renderPresets(); renderProfilePresets();
     }
 
-    // UPDATED LOGIC FOR TEXT PARSING
     document.getElementById('textInput').addEventListener('input', e => {
-        const lines = e.target.value.split('\n')
-            .map(l => l.trim().replace(/^>\s*/, ''))
-            .filter(l => l !== "");
-
+        const lines = e.target.value.split('\n').map(l => l.trim().replace(/^>\s*/, '')).filter(l => l !== "");
         const refPattern = /([1-3]\s)?[A-Z][a-z]+\s\d+:\d+(-?\d+)?/i;
         let foundRef = "REFERENCE", otherLines = [];
-
-        lines.forEach(l => { 
-            if(refPattern.test(l)) foundRef = l.toUpperCase(); 
-            else otherLines.push(l); 
-        });
-
-        // Line 1: The Verse
+        lines.forEach(l => { if(refPattern.test(l)) foundRef = l.toUpperCase(); else otherLines.push(l); });
         if(otherLines[0]) document.getElementById('outVerse').innerText = otherLines[0];
-        
-        // The Bible Reference
         document.getElementById('outRef').innerText = foundRef;
-
-        // Line 2: Short Praise Message
         if(otherLines[1]) document.getElementById('outMsg').innerText = otherLines[1];
-
-        // Line 3: The Prayer Title (Auto-Detected)
-        if(otherLines[2]) {
-            document.getElementById('outPrayerTitle').innerText = otherLines[2];
-        } else {
-            document.getElementById('outPrayerTitle').innerText = "Short Prayer";
-        }
-
-        // Line 4 and beyond: The Prayer Body
-        let prayerBodyLines = [];
-        for (let i = 3; i < otherLines.length; i++) { 
-            prayerBodyLines.push(otherLines[i]); 
-        }
-        document.getElementById('outPrayerBody').innerText = prayerBodyLines.join(" ");
-        
+        if(otherLines[2]) document.getElementById('outPrayerTitle').innerText = otherLines[2];
+        else document.getElementById('outPrayerTitle').innerText = "Short Prayer";
+        let prayerLines = [];
+        for (let i = 3; i < otherLines.length; i++) { prayerLines.push(otherLines[i]); }
+        document.getElementById('outPrayerBody').innerText = prayerLines.join(" ");
         adjustFontSize();
     });
 
@@ -211,16 +195,83 @@
         }
     }
 
-    function saveCurrentBg() { const src = document.getElementById('bg-image').src; getFromDB("bgPresets", (p = []) => { p.push(src); saveToDB("bgPresets", p); renderPresets(); }); }
+    // UPDATED GALLERIES WITH ACTIVE STATE LOGIC
+    function saveCurrentBg() { 
+        const src = document.getElementById('bg-image').src; 
+        saveToDB("activeBg", src);
+        getFromDB("bgPresets", (p = []) => { p.push(src); saveToDB("bgPresets", p); renderPresets(); }); 
+    }
+    
     function deleteBgPreset(idx, event) { event.stopPropagation(); if(confirm("Delete this background?")) { getFromDB("bgPresets", (p = []) => { p.splice(idx, 1); saveToDB("bgPresets", p); renderPresets(); }); } }
-    function renderPresets() { getFromDB("bgPresets", (p = []) => { const g = document.getElementById('presetGallery'); g.innerHTML = ''; p.forEach((d, i) => { const w = document.createElement('div'); w.className = 'thumb-wrapper'; w.onclick = () => document.getElementById('bg-image').src = d; const del = document.createElement('button'); del.className = 'del-btn'; del.innerHTML = 'X'; del.onclick = (e) => deleteBgPreset(i, e); const img = document.createElement('img'); img.src = d; img.className='thumb-img'; w.append(del, img); g.appendChild(w); }); }); }
-    function saveCurrentProfile() { const src = document.getElementById('sig-out-img').src; getFromDB("profP", (p = []) => { p.push(src); saveToDB("profP", p); renderProfilePresets(); }); }
+    
+    function renderPresets() { 
+        const activeSrc = document.getElementById('bg-image').src;
+        getFromDB("bgPresets", (p = []) => { 
+            const g = document.getElementById('presetGallery'); g.innerHTML = ''; 
+            p.forEach((d, i) => { 
+                const w = document.createElement('div'); 
+                // Add active class if it matches the poster's image
+                w.className = 'thumb-wrapper' + (activeSrc === d ? ' active-preset' : ''); 
+                w.onclick = () => { 
+                    const bg = document.getElementById('bg-image'); bg.src = d; bg.style.display = 'block'; 
+                    saveToDB("activeBg", d); 
+                    renderPresets(); // Refresh borders
+                }; 
+                const del = document.createElement('button'); del.className = 'del-btn'; del.innerHTML = 'X'; del.onclick = (e) => deleteBgPreset(i, e); 
+                const img = document.createElement('img'); img.src = d; img.className='thumb-img'; 
+                w.append(del, img); g.appendChild(w); 
+            }); 
+        }); 
+    }
+    
+    function saveCurrentProfile() { 
+        const src = document.getElementById('sig-out-img').src; 
+        saveToDB("sigImg", src);
+        getFromDB("profP", (p = []) => { p.push(src); saveToDB("profP", p); renderProfilePresets(); }); 
+    }
+    
     function deleteProfilePreset(idx, event) { event.stopPropagation(); if(confirm("Delete this profile?")) { getFromDB("profP", (p = []) => { p.splice(idx, 1); saveToDB("profP", p); renderProfilePresets(); }); } }
-    function renderProfilePresets() { getFromDB("profP", (p = []) => { const g = document.getElementById('profileGallery'); g.innerHTML = ''; p.forEach((d, i) => { const w = document.createElement('div'); w.className = 'profile-thumb-wrapper'; w.onclick = () => { document.getElementById('sig-out-img').src = d; saveToDB("sigImg", d); }; const del = document.createElement('button'); del.className = 'del-btn'; del.innerHTML = 'X'; del.onclick = (e) => deleteProfilePreset(i, e); const img = document.createElement('img'); img.src = d; img.className='thumb-img'; w.append(del, img); g.appendChild(w); }); }); }
+    
+    function renderProfilePresets() { 
+        const activeProf = document.getElementById('sig-out-img').src;
+        getFromDB("profP", (p = []) => { 
+            const g = document.getElementById('profileGallery'); g.innerHTML = ''; 
+            p.forEach((d, i) => { 
+                const w = document.createElement('div'); 
+                w.className = 'profile-thumb-wrapper' + (activeProf === d ? ' active-preset' : ''); 
+                w.onclick = () => { 
+                    const sigImg = document.getElementById('sig-out-img'); sigImg.src = d; sigImg.style.display = 'block'; 
+                    saveToDB("sigImg", d); 
+                    renderProfilePresets(); // Refresh borders
+                }; 
+                const del = document.createElement('button'); del.className = 'del-btn'; del.innerHTML = 'X'; del.onclick = (e) => deleteProfilePreset(i, e); 
+                const img = document.createElement('img'); img.src = d; img.className='thumb-img'; 
+                w.append(del, img); g.appendChild(w); 
+            }); 
+        }); 
+    }
 
     document.getElementById('sigNameInput').oninput = e => { document.getElementById('sig-out-name').innerText = e.target.value; saveToDB("lastName", e.target.value); };
-    document.getElementById('bgInput').onchange = e => { const r = new FileReader(); r.onload = ev => { const bg = document.getElementById('bg-image'); bg.src = ev.target.result; bg.style.display = 'block'; }; r.readAsDataURL(e.target.files[0]); };
-    document.getElementById('sigImgInput').onchange = e => { const r = new FileReader(); r.onload = ev => { document.getElementById('sig-out-img').src = ev.target.result; document.getElementById('sig-out-img').style.display = 'block'; saveToDB("sigImg", ev.target.result); }; r.readAsDataURL(e.target.files[0]); };
+    
+    document.getElementById('bgInput').onchange = e => { 
+        const r = new FileReader(); 
+        r.onload = ev => { 
+            const bg = document.getElementById('bg-image'); bg.src = ev.target.result; bg.style.display = 'block'; 
+            saveToDB("activeBg", ev.target.result);
+            renderPresets(); // Check if this new upload matches a preset
+        }; 
+        r.readAsDataURL(e.target.files[0]); 
+    };
+    
+    document.getElementById('sigImgInput').onchange = e => { 
+        const r = new FileReader(); 
+        r.onload = ev => { 
+            const sigImg = document.getElementById('sig-out-img'); sigImg.src = ev.target.result; sigImg.style.display = 'block'; 
+            saveToDB("sigImg", ev.target.result); 
+            renderProfilePresets();
+        }; 
+        r.readAsDataURL(e.target.files[0]); 
+    };
 
     function downloadPoster() { html2canvas(document.getElementById('poster-canvas'), { scale: 3 }).then(c => { const l = document.createElement('a'); l.download = 'GodsWord_Poster.png'; l.href = c.toDataURL(); l.click(); }); }
 </script>
